@@ -10,7 +10,7 @@ struct Statement {
     string query;
     DBType[] types;
     string[] values;
-    uint _params;
+    uint paramCount;
 }
 
 library StatementLib {
@@ -56,9 +56,9 @@ library StatementLib {
         DBType dbType,
         string memory value
     ) internal pure {
-        self.types[self._params] = dbType;
-        self.values[self._params] = value;
-        self._params++;
+        self.types[self.paramCount] = dbType;
+        self.values[self.paramCount] = value;
+        self.paramCount++;
     }
 
     function prepare (

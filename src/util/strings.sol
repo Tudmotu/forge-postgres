@@ -2,8 +2,11 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
+import { strings as stringutils } from 'solidity-stringutils/strings.sol';
 
 library Strings {
+    using stringutils for *;
+
     function len (string memory self) internal pure returns (uint256) {
         uint256 _len;
         uint256 i = 0;
@@ -82,5 +85,24 @@ library Strings {
                Strings.eq(self, '7') ||
                Strings.eq(self, '8') ||
                Strings.eq(self, '9');
+    }
+
+    function split (
+        string memory self,
+        string memory separator
+    ) internal pure returns (string[] memory) {
+        stringutils.slice memory s = self.toSlice();
+        stringutils.slice memory delim = separator.toSlice();
+        uint delimCount = s.count(delim);
+
+        if (delimCount == 0) return new string[](0);
+
+        string[] memory parts = new string[](delimCount + 1);
+
+        for(uint i = 0; i < parts.length; i++) {
+            parts[i] = s.split(delim).toString();
+        }
+
+        return parts;
     }
 }

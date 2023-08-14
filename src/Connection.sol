@@ -5,6 +5,7 @@ import { Vm } from 'forge-std/Vm.sol';
 import { console2 } from 'forge-std/Test.sol';
 import { DBType } from './DBType.sol';
 import { Statement, StatementLib } from './Statement.sol';
+import { Strings } from './util/strings.sol';
 
 struct Connection {
     string username;
@@ -14,7 +15,10 @@ struct Connection {
 }
 
 library ConnectionLib {
+    using Strings for string;
+
     Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+    string private constant SEP = unicode'󿿽'; // Special unused unicode character as separator
 
     function connURL (Connection memory self) internal pure returns (string memory url) {
         url = string.concat(
@@ -32,26 +36,36 @@ library ConnectionLib {
     function _execute (
         Connection memory self,
         Statement memory statement
-    ) internal returns (bytes memory data) {
-        string[] memory inputs = new string[](4);
-        inputs[0] = 'psql';
-        inputs[1] = self.connURL();
-        inputs[2] = '-c';
-        inputs[3] = statement.prepare();
-        data = vm.ffi(inputs);
+    ) internal returns (string[][] memory records) {
+        string[] memory psqlInputs = new string[](8);
+        psqlInputs[0] = 'psql';
+        psqlInputs[1] = self.connURL();
+        psqlInputs[2] = string.concat('-F', SEP);
+        psqlInputs[3] = '-A';
+        psqlInputs[4] = '-t';
+        psqlInputs[5] = '-c';
+        psqlInputs[6] = statement.prepare();
+        bytes memory res = vm.ffi(psqlInputs);
+        string[] memory lines = string(res).split('\n');
+
+        records = new string[][](lines.length);
+        for (uint i = 0; i < lines.length; i++) {
+            string memory line = lines[i];
+            records[i] = line.split(SEP);
+        }
     }
 
     function execute (
         Connection memory self,
         string memory query
-    ) public returns (bytes memory data) {
+    ) public returns (string[][] memory data) {
         data = self._execute(StatementLib.from(query));
     }
 
     function execute (
         Connection memory self,
         Statement memory statement
-    ) public returns (bytes memory data) {
+    ) public returns (string[][] memory data) {
         data = self._execute(statement);
     }
 }
