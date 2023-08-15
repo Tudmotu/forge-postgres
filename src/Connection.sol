@@ -47,6 +47,10 @@ library ConnectionLib {
         psqlInputs[6] = statement.prepare();
         bytes memory res = vm.ffi(psqlInputs);
         string[] memory lines = string(res).split('\n');
+        if (lines.length == 0) {
+            lines = new string[](1);
+            lines[0] = string(res);
+        }
 
         records = new string[][](lines.length);
         for (uint i = 0; i < lines.length; i++) {

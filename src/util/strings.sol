@@ -87,6 +87,13 @@ library Strings {
                Strings.eq(self, '9');
     }
 
+    function beyond (
+        string memory self,
+        string memory prefix
+    ) internal pure returns (string memory) {
+        return self.toSlice().beyond(prefix.toSlice()).toString();
+    }
+
     function split (
         string memory self,
         string memory separator

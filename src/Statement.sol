@@ -61,6 +61,41 @@ library StatementLib {
         self.paramCount++;
     }
 
+    function addBigIntParam (
+        Statement memory self,
+        uint value
+    ) internal pure {
+        self.addParam(DBType.BIGINT, vm.toString(value));
+    }
+
+    function addLongParam (
+        Statement memory self,
+        uint64 value
+    ) internal pure {
+        self.addParam(DBType.LONG, vm.toString(value));
+    }
+
+    function addIntParam (
+        Statement memory self,
+        uint32 value
+    ) internal pure {
+        self.addParam(DBType.INT, vm.toString(value));
+    }
+
+    function addTextParam (
+        Statement memory self,
+        string memory value
+    ) internal pure {
+        self.addParam(DBType.TEXT, value);
+    }
+
+    function addByteaParam (
+        Statement memory self,
+        bytes memory value
+    ) internal pure {
+        self.addParam(DBType.BYTEA, vm.toString(value));
+    }
+
     function prepare (
         Statement memory self
     ) internal pure returns (string memory statement) {
