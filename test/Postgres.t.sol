@@ -7,7 +7,6 @@ import {
     Connection,
     DBType,
     Statement,
-    StatementLib,
     Record
 } from "../src/Postgres.sol";
 import { Strings } from "../src/util/strings.sol";
@@ -37,7 +36,7 @@ contract PostgresTest is Test {
             '(a text, b bytea, c text, d decimal, e int, f bytea, g boolean)'
         ));
 
-        Statement memory statement = StatementLib.from(string.concat(
+        Statement memory statement = conn.createStatement(string.concat(
             'insert into alltypes (a, b, c, d, e, f, g) values \n',
             '($1, $2, $3, $4, $5, $6, $7)'
         ));
@@ -76,7 +75,7 @@ contract PostgresTest is Test {
 
         bytes memory profileBytes = abi.encode(profile);
 
-        Statement memory statement = StatementLib.from(
+        Statement memory statement = conn.createStatement(
             'insert into test2 (username, profile) values ($1, $2)'
         );
         statement.addTextParam('tudmotu');
@@ -101,7 +100,7 @@ contract PostgresTest is Test {
         conn.execute('drop table if exists test1');
         conn.execute('create table test1 (username text, followers int)');
 
-        Statement memory statement = StatementLib.from(
+        Statement memory statement = conn.createStatement(
             'insert into test1 (username, followers) values ($1, $2), ($3, $4)'
         );
         statement.addTextParam('test1');

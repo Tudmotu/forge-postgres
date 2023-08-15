@@ -73,6 +73,14 @@ library ConnectionLib {
     ) public returns (Record[] memory data) {
         data = self._execute(statement);
     }
+
+    function createStatement (
+        Connection memory self,
+        string memory query
+    ) public pure returns (Statement memory) {
+        self;
+        return StatementLib.from(query);
+    }
 }
 
 using ConnectionLib for Connection global;
