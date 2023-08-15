@@ -5,12 +5,13 @@ import { Strings } from './util/strings.sol';
 
 enum DBType {
     BIGINT,
-    LONG,
     INT,
+    DECIMAL,
     TEXT,
     TIMESTAMP,
     DATETIME,
-    BYTEA
+    BYTEA,
+    BOOLEAN
 }
 
 library DBTypeLib {
@@ -20,20 +21,14 @@ library DBTypeLib {
         DBType self,
         string memory value
     ) internal pure returns (string memory strValue) {
-        if (self == DBType.BIGINT) {
-            strValue = value;
-        }
-        else if (self == DBType.LONG) {
-            strValue = value;
-        }
-        else if (self == DBType.INT) {
-            strValue = value;
-        }
-        else if (self == DBType.TEXT) {
+        if (self == DBType.TEXT) {
             strValue = string.concat("\'", value, "\'");
         }
         else if (self == DBType.BYTEA) {
             strValue = string.concat("decode('", value.beyond("0x"), "', 'hex')");
+        }
+        else {
+            strValue = value;
         }
     }
 }

@@ -6,6 +6,7 @@ import {
 } from './Connection.sol';
 import './DBType.sol';
 import './Statement.sol';
+import './Record.sol';
 
 library Postgres {
     function connect (

@@ -5,6 +5,7 @@ import { Vm } from 'forge-std/Vm.sol';
 import { console2 } from 'forge-std/Test.sol';
 import { DBType } from './DBType.sol';
 import { Statement, StatementLib } from './Statement.sol';
+import { Record } from './Record.sol';
 import { Strings } from './util/strings.sol';
 
 struct Connection {
@@ -36,7 +37,7 @@ library ConnectionLib {
     function _execute (
         Connection memory self,
         Statement memory statement
-    ) internal returns (string[][] memory records) {
+    ) internal returns (Record[] memory records) {
         string[] memory psqlInputs = new string[](8);
         psqlInputs[0] = 'psql';
         psqlInputs[1] = self.connURL();
@@ -52,24 +53,24 @@ library ConnectionLib {
             lines[0] = string(res);
         }
 
-        records = new string[][](lines.length);
+        records = new Record[](lines.length);
         for (uint i = 0; i < lines.length; i++) {
             string memory line = lines[i];
-            records[i] = line.split(SEP);
+            records[i] = Record(line.split(SEP));
         }
     }
 
     function execute (
         Connection memory self,
         string memory query
-    ) public returns (string[][] memory data) {
+    ) public returns (Record[] memory data) {
         data = self._execute(StatementLib.from(query));
     }
 
     function execute (
         Connection memory self,
         Statement memory statement
-    ) public returns (string[][] memory data) {
+    ) public returns (Record[] memory data) {
         data = self._execute(statement);
     }
 }

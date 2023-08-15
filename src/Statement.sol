@@ -68,11 +68,11 @@ library StatementLib {
         self.addParam(DBType.BIGINT, vm.toString(value));
     }
 
-    function addLongParam (
+    function addDecimalParam (
         Statement memory self,
-        uint64 value
+        uint value
     ) internal pure {
-        self.addParam(DBType.LONG, vm.toString(value));
+        self.addParam(DBType.DECIMAL, vm.toString(value));
     }
 
     function addIntParam (
@@ -94,6 +94,13 @@ library StatementLib {
         bytes memory value
     ) internal pure {
         self.addParam(DBType.BYTEA, vm.toString(value));
+    }
+
+    function addBooleanParam (
+        Statement memory self,
+        bool value
+    ) internal pure {
+        self.addParam(DBType.BOOLEAN, vm.toString(value));
     }
 
     function prepare (
