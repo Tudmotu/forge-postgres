@@ -1,6 +1,6 @@
 <img src="./banner.png" height=140 alt="banner image" />
 
-# forge-postgres
+# 🐘 forge-postgres
 
 Are you a hackooor? Do you use Forge for stuff it's not meant for? Then this
 plugin is for you! 
@@ -10,12 +10,12 @@ Presenting — forge-postgres. A postgres driver (?) for Forge scripts.
 This plugin lets you connect to a postgres db directly via Forge, execute
 queries and read values into native types — all in beautiful, idiomatic Solidity.
 
-## Requirements
+## 📋 Requirements
 
 - This plugin requires you to run your scripts with `ffi` turned on
 - Postgres not included
 
-## Installation
+## ⚙️ Installation
 
 It's forge!
 
@@ -23,7 +23,7 @@ It's forge!
 $ forge install tudmotu/forge-postgres
 ```
 
-## Usage
+## 📝 Usage
 
 The API is somewhat similar to bindings from other languages such as Java JDBC
 API. It supports placeholders and reading values into native types.
@@ -122,7 +122,7 @@ Profile memory dbProfile = abi.decode(
 );
 ```
 
-## API
+## 🌐 API
 
 ### Postgres
 ```solidity
