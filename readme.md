@@ -107,7 +107,7 @@ profile.balance = 10 ether;
 bytes memory profileBytes = abi.encode(profile);
 
 Statement memory statement = conn.createStatement(
-    'insert into test2 (username, profile) values ($1, $2)'
+    'insert into users (username, profile) values ($1, $2)'
 );
 
 statement.addTextParam('tudmotu');
