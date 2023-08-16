@@ -63,7 +63,7 @@ library StatementLib {
 
     function addBigIntParam (
         Statement memory self,
-        uint value
+        uint64 value
     ) internal pure {
         self.addParam(DBType.BIGINT, vm.toString(value));
     }
