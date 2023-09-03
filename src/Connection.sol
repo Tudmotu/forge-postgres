@@ -56,7 +56,14 @@ library ConnectionLib {
         records = new Record[](lines.length);
         for (uint i = 0; i < lines.length; i++) {
             string memory line = lines[i];
-            records[i] = Record(line.split(SEP));
+            string[] memory splits = line.split(SEP);
+
+            if (splits.length == 0) {
+                splits = new string[](1);
+                splits[0] = line;
+            }
+
+            records[i] = Record(splits);
         }
     }
 

@@ -63,7 +63,7 @@ library StatementLib {
 
     function addBigIntParam (
         Statement memory self,
-        uint64 value
+        int64 value
     ) internal pure {
         self.addParam(DBType.BIGINT, vm.toString(value));
     }
@@ -77,7 +77,7 @@ library StatementLib {
 
     function addIntParam (
         Statement memory self,
-        uint32 value
+        int32 value
     ) internal pure {
         self.addParam(DBType.INT, vm.toString(value));
     }
@@ -92,6 +92,13 @@ library StatementLib {
     function addByteaParam (
         Statement memory self,
         bytes memory value
+    ) internal pure {
+        self.addParam(DBType.BYTEA, vm.toString(value));
+    }
+
+    function addByteaParam (
+        Statement memory self,
+        address value
     ) internal pure {
         self.addParam(DBType.BYTEA, vm.toString(value));
     }

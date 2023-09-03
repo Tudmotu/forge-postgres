@@ -21,11 +21,14 @@ library DBTypeLib {
         DBType self,
         string memory value
     ) internal pure returns (string memory strValue) {
-        if (self == DBType.TEXT) {
+        if (
+            self == DBType.TEXT ||
+            self == DBType.DECIMAL
+        ) {
             strValue = string.concat("\'", value, "\'");
         }
         else if (self == DBType.BYTEA) {
-            strValue = string.concat("decode('", value.beyond("0x"), "', 'hex')");
+            strValue = string.concat("'\\x", value.beyond("0x"), "'");
         }
         else {
             strValue = value;

@@ -94,6 +94,13 @@ library Strings {
         return self.toSlice().beyond(prefix.toSlice()).toString();
     }
 
+    function contains (
+        string memory self,
+        string memory needle
+    ) internal pure returns (bool) {
+        return self.toSlice().contains(needle.toSlice());
+    }
+
     function split (
         string memory self,
         string memory separator

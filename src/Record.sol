@@ -34,7 +34,11 @@ library RecordLib {
         Record memory self,
         uint columnIndex
     ) internal pure returns (address) {
-        return vm.parseAddress(self.raw[columnIndex]);
+        string memory value = self.raw[columnIndex];
+        if (value.contains('\\')) {
+            return address(bytes20(vm.parseBytes(value.beyond('\\x'))));
+        }
+        return vm.parseAddress(value);
     }
 
     function readUint (
