@@ -38,23 +38,21 @@ library ConnectionLib {
         Connection memory self,
         Statement memory statement
     ) internal returns (Record[] memory records) {
-        string[] memory psqlInputs = new string[](8);
+        string[] memory psqlInputs = new string[](10);
         psqlInputs[0] = 'psql';
         psqlInputs[1] = self.connURL();
         psqlInputs[2] = string.concat('-F', SEP);
         psqlInputs[3] = '-A';
         psqlInputs[4] = '-t';
         psqlInputs[5] = '-c';
-        psqlInputs[6] = statement.prepare();
+        psqlInputs[6] = "select 'forge-postgres'";
+        psqlInputs[7] = '-c';
+        psqlInputs[8] = statement.prepare();
         bytes memory res = vm.ffi(psqlInputs);
         string[] memory lines = string(res).split('\n');
-        if (lines.length == 0) {
-            lines = new string[](1);
-            lines[0] = string(res);
-        }
+        records = new Record[](lines.length - 1);
 
-        records = new Record[](lines.length);
-        for (uint i = 0; i < lines.length; i++) {
+        for (uint i = 1; i < lines.length; i++) {
             string memory line = lines[i];
             string[] memory splits = line.split(SEP);
 
@@ -63,7 +61,7 @@ library ConnectionLib {
                 splits[0] = line;
             }
 
-            records[i] = Record(splits);
+            records[i - 1] = Record(splits);
         }
     }
 
