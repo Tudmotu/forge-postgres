@@ -61,6 +61,55 @@ library StatementLib {
         self.paramCount++;
     }
 
+    function addParam (
+        Statement memory self,
+        int64 value
+    ) internal pure {
+        self.addBigIntParam(value);
+    }
+
+    function addParam (
+        Statement memory self,
+        uint value
+    ) internal pure {
+        self.addDecimalParam(value);
+    }
+
+    function addParam (
+        Statement memory self,
+        string memory value
+    ) internal pure {
+        self.addTextParam(value);
+    }
+
+    function addParam (
+        Statement memory self,
+        address value
+    ) internal pure {
+        self.addByteaParam(value);
+    }
+
+    function addParam (
+        Statement memory self,
+        bool value
+    ) internal pure {
+        self.addBooleanParam(value);
+    }
+
+    function addParam (
+        Statement memory self,
+        bytes memory value
+    ) internal pure {
+        self.addByteaParam(value);
+    }
+
+    function addParam (
+        Statement memory self,
+        bytes32 value
+    ) internal pure {
+        self.addByteaParam(abi.encode(value));
+    }
+
     function addBigIntParam (
         Statement memory self,
         int64 value
