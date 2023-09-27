@@ -10,7 +10,6 @@ struct Statement {
     string query;
     DBType[] types;
     string[] values;
-    uint paramCount;
 }
 
 library StatementLib {
@@ -19,36 +18,9 @@ library StatementLib {
     function from (
         string memory query
     ) public pure returns (Statement memory statement) {
-        uint varCount = StatementLib._findVarCount(query);
-        DBType[] memory types = new DBType[](varCount);
-        string[] memory values = new string[](varCount);
-        statement = Statement(query, types, values, 0);
-    }
-
-    function _findVarCount (
-        string memory query
-    ) internal pure returns (uint count) {
-        uint c = 0;
-        while (c < Strings.len(query)) {
-            string memory char = Strings.charAt(query, c);
-            if (Strings.eq(char, '\\')) {
-                c += 2;
-            }
-            else if (Strings.eq(char, '$')) {
-                string memory number = '';
-                uint n = 1;
-                while (Strings.isNumber(Strings.charAt(query, c + n))) {
-                    number = string.concat(number, Strings.charAt(query, c + n));
-                    n++;
-                }
-                uint varIndex = vm.parseUint(number);
-                if (varIndex > count) count = varIndex;
-                c += n;
-            }
-            else {
-                c++;
-            }
-        }
+        DBType[] memory types = new DBType[](0);
+        string[] memory values = new string[](0);
+        statement = Statement(query, types, values);
     }
 
     function addParam (
@@ -56,9 +28,20 @@ library StatementLib {
         DBType dbType,
         string memory value
     ) internal pure {
-        self.types[self.paramCount] = dbType;
-        self.values[self.paramCount] = value;
-        self.paramCount++;
+        DBType[] memory newTypes = new DBType[](self.types.length + 1);
+        string[] memory newValues = new string[](self.values.length + 1);
+
+        for (uint i = 0; i < self.types.length; i++) {
+            newTypes[i] = self.types[i];
+        }
+        newTypes[newTypes.length - 1] = dbType;
+        self.types = newTypes;
+
+        for (uint i = 0; i < self.values.length; i++) {
+            newValues[i] = self.values[i];
+        }
+        newValues[newValues.length - 1] = value;
+        self.values = newValues;
     }
 
     function addParam (
@@ -161,36 +144,32 @@ library StatementLib {
 
     function prepare (
         Statement memory self
-    ) internal pure returns (string memory statement) {
-        uint c = 0;
-        while (c < Strings.len(self.query)) {
-            string memory char = Strings.charAt(self.query, c);
-            if (Strings.eq(char, '\\')) {
-                statement = string.concat(
-                    statement,
-                    char,
-                    Strings.charAt(self.query, c + 1)
-                );
-                c += 2;
-            }
-            else if (Strings.eq(char, '$')) {
-                string memory number = '';
-                uint n = 1;
-                while (Strings.isNumber(Strings.charAt(self.query, c + n))) {
-                    number = string.concat(number, Strings.charAt(self.query, c + n));
-                    n++;
-                }
-                uint varIndex = vm.parseUint(number) - 1;
-                string memory val = self.types[varIndex]
-                                        .serialize(self.values[varIndex]);
-                statement = string.concat(statement, val);
-                c += n;
-            }
-            else {
-                statement = string.concat(statement, char);
-                c++;
-            }
+    ) internal returns (string memory statement) {
+        if (self.types.length == 0) return self.query;
+        string[] memory replacements = new string[](self.types.length);
+        for (uint i = 0; i < self.types.length; i++) {
+            string memory serialized = self.types[i].serialize(self.values[i]);
+            replacements[i] = string.concat(
+                "s/\\$", vm.toString(i+1), '/', serialized, "/g"
+            );
         }
+
+        string memory tmpFile = string.concat(
+            vm.projectRoot(), '/.forge/tmp/fp.tmp.sql'
+        );
+        vm.writeFile(tmpFile, self.query);
+        string[] memory args = new string[](3 + 2 * replacements.length);
+        args[0] = 'sed';
+        args[1] = '-i';
+        args[args.length - 1] = tmpFile;
+
+        for (uint i = 0; i < replacements.length; i++) {
+            args[2 + 2 * i] = '-e';
+            args[3 + 2 * i] = replacements[i];
+        }
+
+        vm.ffi(args);
+        statement = vm.readFile(tmpFile);
     }
 }
 

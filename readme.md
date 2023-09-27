@@ -13,6 +13,8 @@ queries and read values into native types — all in beautiful, idiomatic Solidi
 ## 📋 Requirements
 
 - This plugin requires you to run your scripts with `ffi` turned on
+- Some basic configuration is required (see instructions below)
+- The `sed` utility must be installed
 - Postgres not included
 
 ## ⚙️ Installation
@@ -21,6 +23,16 @@ It's forge!
 
 ```console
 $ forge install tudmotu/forge-postgres
+```
+
+You do need one more thing and that's creating a `.forge/tmp/` directory for
+temporary files. Create the directory, then add write permissions in your
+`foundry.toml`:
+
+```toml
+fs_permissions = [
+    { access = "read-write", path = "./.forge/logs/"}
+]
 ```
 
 ## 📝 Usage

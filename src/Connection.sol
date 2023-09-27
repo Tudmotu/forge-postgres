@@ -38,6 +38,9 @@ library ConnectionLib {
         Connection memory self,
         Statement memory statement
     ) internal returns (Record[] memory records) {
+        string memory queryFilePath = string.concat(
+            vm.projectRoot(), '/.forge/tmp/fp.tmp.sql'
+        );
         string[] memory psqlInputs = new string[](10);
         psqlInputs[0] = 'psql';
         psqlInputs[1] = self.connURL();
@@ -46,8 +49,9 @@ library ConnectionLib {
         psqlInputs[4] = '-t';
         psqlInputs[5] = '-c';
         psqlInputs[6] = "select 'forge-postgres'";
-        psqlInputs[7] = '-c';
-        psqlInputs[8] = statement.prepare();
+        psqlInputs[7] = '-f';
+        psqlInputs[8] = queryFilePath;
+        vm.writeFile(queryFilePath, statement.prepare());
         bytes memory res = vm.ffi(psqlInputs);
         string[] memory lines = string(res).split('\n');
         if (lines.length == 0) {

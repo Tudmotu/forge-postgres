@@ -28,7 +28,7 @@ library DBTypeLib {
             strValue = string.concat("\'", value, "\'");
         }
         else if (self == DBType.BYTEA) {
-            strValue = string.concat("'\\x", value.beyond("0x"), "'");
+            strValue = string.concat("'\\\\x", value.beyond("0x"), "'");
         }
         else {
             strValue = value;
