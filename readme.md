@@ -15,6 +15,7 @@ queries and read values into native types — all in beautiful, idiomatic Solidi
 - This plugin requires you to run your scripts with `ffi` turned on
 - Some basic configuration is required (see instructions below)
 - The `sed` utility must be installed
+- `python` must be installed
 - Postgres not included
 
 ## ⚙️ Installation

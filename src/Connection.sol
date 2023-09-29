@@ -7,6 +7,7 @@ import { DBType } from './DBType.sol';
 import { Statement, StatementLib } from './Statement.sol';
 import { Record } from './Record.sol';
 import { Strings } from './util/strings.sol';
+import { Files } from './util/files.sol';
 
 struct Connection {
     string username;
@@ -38,9 +39,7 @@ library ConnectionLib {
         Connection memory self,
         Statement memory statement
     ) internal returns (Record[] memory records) {
-        string memory queryFilePath = string.concat(
-            vm.projectRoot(), '/.forge/tmp/fp.tmp.sql'
-        );
+        string memory queryFilePath = Files.generate();
         string[] memory psqlInputs = new string[](10);
         psqlInputs[0] = 'psql';
         psqlInputs[1] = self.connURL();
@@ -53,6 +52,7 @@ library ConnectionLib {
         psqlInputs[8] = queryFilePath;
         vm.writeFile(queryFilePath, statement.prepare());
         bytes memory res = vm.ffi(psqlInputs);
+        vm.removeFile(queryFilePath);
         string[] memory lines = string(res).split('\n');
         if (lines.length == 0) {
             return records;

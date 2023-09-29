@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import { Vm } from 'forge-std/Vm.sol';
 import { DBType } from './DBType.sol';
 import './util/strings.sol';
+import { Files } from './util/files.sol';
 
 struct Statement {
     string query;
@@ -154,9 +155,7 @@ library StatementLib {
             );
         }
 
-        string memory tmpFile = string.concat(
-            vm.projectRoot(), '/.forge/tmp/fp.tmp.sql'
-        );
+        string memory tmpFile = Files.generate();
         vm.writeFile(tmpFile, self.query);
         string[] memory args = new string[](3 + 2 * replacements.length);
         args[0] = 'sed';
@@ -170,6 +169,7 @@ library StatementLib {
 
         vm.ffi(args);
         statement = vm.readFile(tmpFile);
+        vm.removeFile(tmpFile);
     }
 }
 
