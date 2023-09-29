@@ -28,6 +28,15 @@ contract PostgresTest is Test {
         );
     }
 
+    function testStatementWithDoubleDigitParamCount() public {
+        Connection memory conn = connection();
+        Statement memory statement = conn.createStatement('($1, $10)');
+        for (uint i = 0; i < 10; i++) {
+            statement.addParam(2 ** i);
+        }
+        assertEq(statement.prepare(), "('1', '512')");
+    }
+
     function testReadAllTypes() public {
         Connection memory conn = connection();
         conn.execute('drop table if exists alltypes');

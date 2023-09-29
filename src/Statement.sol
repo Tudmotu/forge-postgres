@@ -147,11 +147,15 @@ library StatementLib {
         Statement memory self
     ) internal returns (string memory statement) {
         if (self.types.length == 0) return self.query;
+        uint lastParam = self.types.length - 1;
         string[] memory replacements = new string[](self.types.length);
         for (uint i = 0; i < self.types.length; i++) {
-            string memory serialized = self.types[i].serialize(self.values[i]);
+            uint currentParamIndex = lastParam - i;
+            string memory serialized = self
+                .types[currentParamIndex]
+                .serialize(self.values[currentParamIndex]);
             replacements[i] = string.concat(
-                "s/\\$", vm.toString(i+1), '/', serialized, "/g"
+                "s/\\$", vm.toString(currentParamIndex + 1), '/', serialized, "/g"
             );
         }
 

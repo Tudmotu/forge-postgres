@@ -2,5 +2,9 @@
 src = 'src'
 out = 'out'
 libs = ['lib']
+fs_permissions = [
+    { access = "read-write", path = "./.forge/tmp/"},
+    { access = "read", path = "./"}
+]
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
